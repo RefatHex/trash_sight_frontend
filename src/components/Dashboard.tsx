@@ -78,7 +78,7 @@ const Dashboard: React.FC = () => {
         <div className="flex justify-center items-center gap-2">
           <Recycle size={32} className="text-primary recycling-icon" />
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            EcoSort Guardian
+            Trash Sight
           </h1>
           <Trash2 size={28} className="text-accent" />
         </div>
