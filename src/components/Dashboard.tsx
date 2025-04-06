@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
     try {
       console.log("Sending request to backend...");
       const response = await axios.post(
-        "http://localhost:5000/classify_image",
+        "https://refathex-trash-sight.hf.space/classify_image",
         formData,
         {
           headers: {
