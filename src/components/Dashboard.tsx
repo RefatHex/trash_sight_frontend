@@ -1,6 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Recycle, Trash2, Upload, Image as ImageIcon } from "lucide-react";
+import {
+  Recycle,
+  Trash2,
+  Upload,
+  Image as ImageIcon,
+  Camera,
+} from "lucide-react";
 import axios from "axios";
 
 const Dashboard: React.FC = () => {
@@ -9,6 +15,10 @@ const Dashboard: React.FC = () => {
   const [result, setResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const photoRef = useRef<HTMLCanvasElement>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -23,7 +33,83 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // In the handleUpload function:
+  // Start camera
+  const startCamera = async () => {
+    setShowCamera(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+        },
+      });
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setCameraStream(stream);
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setError("Could not access camera. Please check permissions.");
+      setShowCamera(false);
+    }
+  };
+
+  // Stop camera
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      setCameraStream(null);
+    }
+    setShowCamera(false);
+  };
+
+  // Take photo
+  const capturePhoto = () => {
+    if (!videoRef.current || !photoRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = photoRef.current;
+
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to blob
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+
+        // Create a File object from the blob
+        const file = new File([blob], "camera-capture.jpg", {
+          type: "image/jpeg",
+        });
+
+        // Set the captured image as the selected file
+        setSelectedFile(file);
+
+        // Create and set preview URL
+        const fileUrl = URL.createObjectURL(file);
+        setPreviewUrl(fileUrl);
+
+        // Reset previous results and errors
+        setResult(null);
+        setError(null);
+
+        // Stop the camera after taking the photo
+        stopCamera();
+      },
+      "image/jpeg",
+      0.9
+    );
+  };
 
   const handleUpload = async () => {
     if (!selectedFile) return;
@@ -60,6 +146,7 @@ const Dashboard: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   const clearImage = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
@@ -96,13 +183,15 @@ const Dashboard: React.FC = () => {
                   <div className="p-1.5 bg-primary/10 rounded-full">
                     <ImageIcon size={20} className="text-primary" />
                   </div>
-                  Image Upload
+                  {showCamera ? "Camera Capture" : "Image Upload"}
                 </CardTitle>
               </div>
             </CardHeader>
             <CardContent className="p-4">
               <div className="space-y-4">
-                {/* File Upload Area */}
+                {/* Hidden canvas for capturing photos */}
+                <canvas ref={photoRef} className="hidden"></canvas>
+
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <input
                     type="file"
@@ -112,19 +201,58 @@ const Dashboard: React.FC = () => {
                     className="hidden"
                   />
 
-                  {!previewUrl ? (
-                    <label
-                      htmlFor="image-upload"
-                      className="flex flex-col items-center justify-center cursor-pointer"
-                    >
-                      <Upload size={48} className="text-gray-400 mb-2" />
-                      <p className="text-gray-600 font-medium">
-                        Click to upload an image
-                      </p>
-                      <p className="text-gray-400 text-sm mt-1">
-                        JPG, PNG, GIF up to 10MB
-                      </p>
-                    </label>
+                  {showCamera ? (
+                    <div className="space-y-4">
+                      <div className="relative overflow-hidden rounded-lg max-h-[400px]">
+                        <video
+                          ref={videoRef}
+                          autoPlay
+                          playsInline
+                          className="mx-auto max-h-[400px] object-contain"
+                        />
+                      </div>
+                      <div className="flex gap-2 justify-center">
+                        <button
+                          onClick={stopCamera}
+                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={capturePhoto}
+                          className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                        >
+                          Take Photo
+                        </button>
+                      </div>
+                    </div>
+                  ) : !previewUrl ? (
+                    <div className="space-y-6">
+                      <div className="flex flex-col md:flex-row gap-4 justify-center">
+                        <button
+                          onClick={startCamera}
+                          className="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
+                        >
+                          <Camera size={48} className="text-gray-400 mb-2" />
+                          <p className="text-gray-600 font-medium">
+                            Capture with Camera
+                          </p>
+                        </button>
+
+                        <label
+                          htmlFor="image-upload"
+                          className="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition cursor-pointer"
+                        >
+                          <Upload size={48} className="text-gray-400 mb-2" />
+                          <p className="text-gray-600 font-medium">
+                            Upload an Image
+                          </p>
+                          <p className="text-gray-400 text-sm mt-1">
+                            JPG, PNG, GIF up to 10MB
+                          </p>
+                        </label>
+                      </div>
+                    </div>
                   ) : (
                     <div className="space-y-4">
                       <div className="relative max-h-[400px] overflow-hidden rounded-lg">
@@ -219,7 +347,9 @@ const Dashboard: React.FC = () => {
             </CardHeader>
             <CardContent className="p-4">
               <ol className="list-decimal list-inside space-y-2 text-gray-600">
-                <li>Upload an image of an item you want to classify</li>
+                <li>
+                  Upload or capture an image of an item you want to classify
+                </li>
                 <li>Our AI model will analyze the image</li>
                 <li>
                   You'll receive the classification result and the appropriate
