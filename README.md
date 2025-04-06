@@ -1,69 +1,109 @@
-# Welcome to your Lovable project
+# EcoSort Guardian - Smart Waste Detection System
 
-## Project info
+EcoSort Guardian is a modern web application designed to help users correctly sort waste items into appropriate recycling bins using computer vision technology. The system detects, classifies, and recommends the correct disposal bin for various waste items captured through a camera or uploaded as images.
 
-**URL**: https://lovable.dev/projects/776fb339-fb82-4c2b-8ad0-03494e65cd09
+## ♻️ Features
 
-## How can I edit this code?
+- **Real-time Waste Detection**: Analyze waste items through your camera
+- **Image Upload**: Upload images of waste items for classification
+- **Smart Classification**: Automatically categorize waste into appropriate categories
+- **Three-Bin System**:
+  - 🟡 Yellow Bin (Recyclables): Plastic, cardboard, paper, metal, and glass items
+  - 🟣 Purple Bin (Reusable cups): Specific reusable cups that will be washed and reused
+  - ⚫ Black Bin (General waste): Food scraps, tissues, and non-recyclable items
+- **Rejection Feedback**: Clear visual feedback when items don't belong in the selected bin
+- **Detection Statistics**: Track detection counts, rejections, and acceptance rates
 
-There are several ways of editing your application.
+## 🚀 Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/776fb339-fb82-4c2b-8ad0-03494e65cd09) and start prompting.
+- Node.js (v16 or later)
+- npm or yarn
 
-Changes made via Lovable will be committed automatically to this repo.
+### Installation
 
-**Use your preferred IDE**
+1. Clone the repository:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+   ```bash
+   git clone
+   cd ecosort-guardian-frontend
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. Install dependencies:
 
-Follow these steps:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Start the development server:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+4. Open your browser and navigate to `http://localhost:5173`
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 🧰 Tech Stack
 
-**Edit a file directly in GitHub**
+- **Framework**: React with TypeScript
+- **Styling**: TailwindCSS
+- **UI Components**: Radix UI + shadcn/ui
+- **State Management**: React Query
+- **Routing**: React Router
+- **API Client**: Axios
+- **Computer Vision Integration**: Custom AI model backend
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📸 Camera Access
 
-**Use GitHub Codespaces**
+The application requires camera access for real-time waste detection. Make sure to:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Use HTTPS in production environments
+2. Grant camera permissions in your browser when prompted
+3. If using a mobile device, ensure the application has necessary permissions
 
-## What technologies are used for this project?
+## 🔄 Bin System Overview
 
-This project is built with .
+### Yellow Bin - Recyclables
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Plastic containers and bottles
+- Paper and cardboard
+- Glass bottles and jars
+- Metal cans and aluminum foil
 
-## How can I deploy this project?
+### Purple Bin - Reusable Cups
 
-Simply open [Lovable](https://lovable.dev/projects/776fb339-fb82-4c2b-8ad0-03494e65cd09) and click on Share -> Publish.
+- Specific types of reusable cups
+- Coffee mugs
+- Reusable drink containers
 
-## I want to use a custom domain - is that possible?
+### Black Bin - General Waste
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- Food waste
+- Tissues and paper towels
+- Non-recyclable plastics
+- Other non-recyclable items
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgements
+
+- Frontend UI components based on [shadcn/ui](https://ui.shadcn.com/)
+- Icons provided by [Lucide](https://lucide.dev/)
+- Computer vision models trained on waste classification datasets
